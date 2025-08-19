@@ -17,6 +17,7 @@ namespace NBitcoin.Secp256k1
 			sha.Initialize();
 			_Pos = 0;
 		}
+  
 		/// <summary>
 		/// Initializes a sha256 struct and writes the 64 byte string
 		/// SHA256(tag)||SHA256(tag) into it.
@@ -30,8 +31,8 @@ namespace NBitcoin.Secp256k1
 			GetHash(buf);
 			Initialize();
 			Write(buf);
-			Write(buf);
 		}
+  
 		/// <summary>
 		/// Initializes a sha256 struct and writes the 64 byte string
 		/// SHA256(tag)||SHA256(tag) into it.
@@ -41,9 +42,11 @@ namespace NBitcoin.Secp256k1
 		{
 			InitializeTagged(Encoding.ASCII.GetBytes(tag));
 		}
+  
 		System.Security.Cryptography.SHA256 sha = System.Security.Cryptography.SHA256.Create();
 		int _Pos;
 		byte[] _Buffer = System.Buffers.ArrayPool<byte>.Shared.Rent(64);
+  
 		public void Write(ReadOnlySpan<byte> buffer)
 		{
 			int copied = 0;
@@ -60,12 +63,14 @@ namespace NBitcoin.Secp256k1
 					innerSpan = _Buffer.AsSpan();
 			}
 		}
+  
 		public void Write(byte b)
 		{
 			_Buffer[_Pos] = b;
 			_Pos++;
 			ProcessBlockIfNeeded();
 		}
+  
 		private bool ProcessBlockIfNeeded()
 		{
 			if (_Pos == _Buffer.Length)
@@ -75,6 +80,7 @@ namespace NBitcoin.Secp256k1
 			}
 			return false;
 		}
+  
 		private void ProcessBlock()
 		{
 			sha.TransformBlock(_Buffer, 0, _Pos, null, -1);
@@ -87,6 +93,7 @@ namespace NBitcoin.Secp256k1
 			GetHash(r);
 			return r;
 		}
+  
 		public void GetHash(Span<byte> output)
 		{
 			ProcessBlock();
